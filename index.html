@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rung Chuông Vàng Online</title>
+    <script>
+      window.MathJax = {
+        tex: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          packages: {'[+]': ['boldsymbol']}
+        },
+        svg: {
+          fontCache: 'global',
+          scale: 1,
+          minScale: 0.5,
+          overflow: 'linebreak',
+          linebreaks: { automatic: true, width: '90%' }
+        },
+        options: {
+          renderActions: {
+            addMenu: []
+          }
+        },
+        startup: { typeset: false }
+      };
+    </script>
+    <style>
+      /* Đồng nhất kích thước công thức MathJax */
+      mjx-container {
+        display: inline-flex !important;
+        align-items: center !important;
+        vertical-align: middle !important;
+        max-width: 100% !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        font-size: inherit !important;
+      }
+      mjx-container[display="true"] {
+        display: inline-flex !important;
+        margin: 0 !important;
+      }
+      mjx-container svg {
+        max-width: 100% !important;
+        height: auto !important;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-svg.js" defer></script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

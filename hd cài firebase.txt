@@ -1,0 +1,96 @@
+Đây là hướng dẫn chi tiết từng bước để đăng ký và cấu hình Firebase cho app Rung Chuông Vàng:
+
+---
+
+## 🔥 Hướng Dẫn Setup Firebase (Từng Bước)
+
+### Bước 1: Tạo Firebase Project
+
+1. Truy cập **https://console.firebase.google.com/**
+2. Đăng nhập bằng tài khoản Google
+3. Nhấn **"Create a project"** (hoặc "Add project")
+4. Nhập tên project: `rung-chuong-vang` → nhấn **Continue**
+5. **Bỏ chọn** Google Analytics (không cần) → nhấn **Create project**
+6. Chờ vài giây → nhấn **Continue**
+
+---
+
+### Bước 2: Bật Realtime Database
+
+1. Menu bên trái → **Build** → **Realtime Database**
+2. Nhấn **"Create Database"**
+3. Chọn location: **Singapore (`asia-southeast1`)** → **Next**
+4. Chọn **"Start in test mode"** → **Enable**
+5. ✅ Database đã được tạo! Copy URL database (dạng: `https://rung-chuong-vang-default-rtdb.asia-southeast1.firebasedatabase.app`)
+
+---
+
+### Bước 3: Bật Authentication (Đăng nhập ẩn danh)
+
+1. Menu bên trái → **Build** → **Authentication**
+2. Nhấn **"Get started"**
+3. Tab **"Sign-in method"** → tìm **"Anonymous"**
+4. Nhấn vào → **Bật toggle Enable** → **Save**
+
+---
+
+### Bước 4: Tạo Web App & Lấy Config
+
+1. Nhấn biểu tượng **⚙️ (Settings)** cạnh "Project Overview" → **Project settings**
+2. Kéo xuống phần **"Your apps"** → nhấn biểu tượng **`</>`** (Web)
+3. Nhập tên: `Rung Chuong Vang Web` → nhấn **"Register app"**
+4. Sẽ hiện ra đoạn config như thế này:
+
+```javascript
+const firebaseConfig = {
+  apiKey: "AIzaSyB...",
+  authDomain: "rung-chuong-vang.firebaseapp.com",
+  databaseURL: "https://rung-chuong-vang-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "rung-chuong-vang",
+  storageBucket: "rung-chuong-vang.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
+};
+```
+
+5. **Copy toàn bộ giá trị** này ra notepad
+
+---
+
+### Bước 5: Dán Config Vào Code
+
+Bạn đang mở file [firebaseConfig.ts](cci:7://file:///c:/Users/admin/Downloads/rung%20chuong%20vang/src/services/firebaseConfig.ts:0:0-0:0). Hãy gửi cho tôi đoạn config Firebase bạn vừa copy, tôi sẽ dán vào file cho bạn. Hoặc bạn tự thay thế phần này trong file [src/services/firebaseConfig.ts](cci:7://file:///c:/Users/admin/Downloads/rung%20chuong%20vang/src/services/firebaseConfig.ts:0:0-0:0):
+
+```typescript
+// Thay thế dòng 10-16 bằng config thật của bạn:
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_API_KEY",
+  authDomain: "PASTE_YOUR_AUTH_DOMAIN",
+  databaseURL: "PASTE_YOUR_DATABASE_URL",
+  projectId: "PASTE_YOUR_PROJECT_ID",
+  storageBucket: "PASTE_YOUR_STORAGE_BUCKET",
+  messagingSenderId: "PASTE_YOUR_SENDER_ID",
+  appId: "PASTE_YOUR_APP_ID"
+};
+```
+
+---
+
+### Bước 6: Deploy lên Vercel
+
+1. Push code lên GitHub:
+   ```bash
+   git init
+   git add .
+   git commit -m "Rung Chuong Vang - Firebase Realtime"
+   git remote add origin https://github.com/YOUR_USERNAME/rung-chuong-vang.git
+   git push -u origin main
+   ```
+
+2. Vào **https://vercel.com** → đăng nhập → **"Add New Project"**
+3. Import repo từ GitHub → Vercel sẽ tự detect Vite
+4. Nhấn **Deploy** → chờ vài phút là xong!
+
+---
+
+> ⚠️ **Lưu ý quan trọng**: Khi config xong Firebase, hãy gửi cho tôi đoạn config để tôi cập nhật vào file, hoặc bạn tự sửa dòng 10-16 trong file [src/services/firebaseConfig.ts](cci:7://file:///c:/Users/admin/Downloads/rung%20chuong%20vang/src/services/firebaseConfig.ts:0:0-0:0). Sau đó build lại (`npm run build`) và deploy!

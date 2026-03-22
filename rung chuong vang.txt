@@ -1,0 +1,536 @@
+# 🚀 YÊU CẦU TẠO ỨNG DỤNG WEB: RUNG CHUÔNG VÀNG ONLINE
+
+## 📝 MÔ TẢ Ý TƯỞNG
+Tạo ứng dụng web gameshow "Rung Chuông Vàng" trực tuyến cho giáo viên, hỗ trợ tối đa 100 học sinh tham gia đồng thời. Hệ thống tự động chấm điểm, xếp hạng thời gian thực và tạo không khí thi đấu sôi nổi như gameshow truyền hình.
+
+---
+
+## ⚡ CHỨC NĂNG CHÍNH
+
+### 1. Quản lý Câu hỏi (Question Bank)
+- ✅ CRUD câu hỏi: Trắc nghiệm 4 đáp án, Đúng/Sai, Điền từ
+- ✅ Upload hình ảnh/video đính kèm câu hỏi
+- ✅ Phân loại theo môn học, độ khó (Dễ/Trung bình/Khó)
+- ✅ Import/Export câu hỏi từ file JSON hoặc Excel
+- ✅ **AI Generator**: Dùng Gemini AI tạo tự động 10-20 câu hỏi từ chủ đề
+
+### 2. Tạo Phòng Chơi (Game Room)
+- ✅ Tạo phòng với mã PIN 6 số hoặc QR Code
+- ✅ Chọn bộ câu hỏi (10-50 câu)
+- ✅ Cài đặt: Thời gian/câu (10-60s), Điểm thưởng tốc độ, Chế độ loại trực tiếp
+- ✅ Phòng chờ hiển thị danh sách học sinh đã vào (realtime)
+
+### 3. Gameplay - Màn hình Giáo viên (Host)
+- ✅ Hiển thị câu hỏi + 4 đáp án lớn trên màn hình chính
+- ✅ Đồng hồ đếm ngược với hiệu ứng âm thanh
+- ✅ Biểu đồ cột thời gian thực: Số người chọn từng đáp án
+- ✅ Nút "Công bố đáp án" → Hiệu ứng pháo hoa + âm thanh chiến thắng
+- ✅ Danh sách học sinh bị loại (nếu chế độ loại trực tiếp)
+- ✅ **Tính năng "Cứu trợ"**: Chọn học sinh bị loại → Đưa câu hỏi phụ → Hồi sinh nếu đúng
+
+### 4. Gameplay - Màn hình Học sinh (Player)
+- ✅ Nhập tên + Avatar (chọn emoji hoặc upload ảnh)
+- ✅ Nhập mã PIN → Vào phòng chờ
+- ✅ Màn hình câu hỏi: 4 nút đáp án lớn, dễ bấm trên mobile
+- ✅ Hiển thị thời gian còn lại + điểm hiện tại
+- ✅ Feedback ngay lập tức: ✅ Đúng (màu xanh) / ❌ Sai (màu đỏ)
+- ✅ Trạng thái: "Đang chơi" / "Bị loại" / "Được cứu trợ"
+
+### 5. Bảng Xếp Hạng (Leaderboard)
+- ✅ Top 10 học sinh điểm cao nhất
+- ✅ Công thức điểm: `Điểm = (Đúng/Sai) × (1000 - Thời gian trả lời × 10)`
+- ✅ Hiển thị: Vị trí, Tên, Avatar, Điểm, Số câu đúng
+- ✅ Animation khi thay đổi vị trí
+- ✅ Podium 3 người chiến thắng với hiệu ứng vương miện
+
+### 6. Báo Cáo & Thống Kê
+- ✅ Tổng quan: Tổng số người chơi, Tỷ lệ đúng trung bình, Thời gian chơi
+- ✅ Chi tiết từng học sinh: Điểm, Câu đúng/sai, Thời gian trung bình
+- ✅ Phân tích câu hỏi: Câu nào khó nhất (tỷ lệ sai cao)
+- ✅ Export PDF/Excel báo cáo
+
+### 7. Âm thanh & Hiệu ứng
+- ✅ Nhạc nền gameshow (có thể tắt/bật)
+- ✅ Âm thanh đếm ngược (tick-tock 5 giây cuối)
+- ✅ Tiếng chuông "Ting!" khi trả lời đúng
+- ✅ Tiếng "Buzz" khi trả lời sai
+- ✅ Pháo hoa + confetti khi công bố người chiến thắng
+
+---
+
+## 🛠️ YÊU CẦU KỸ THUẬT
+
+### Tech Stack:
+```javascript
+// Frontend: Single Page Application
+- HTML5 + CSS3 (Grid, Flexbox, Animations)
+- Vanilla JavaScript ES6+ (No framework)
+- WebSocket hoặc Firebase Realtime Database (cho multiplayer)
+
+// Thư viện CDN:
+- Socket.io Client (realtime communication)
+- QRCode.js (tạo QR code phòng)
+- Chart.js (biểu đồ thống kê)
+- Confetti.js (hiệu ứng pháo hoa)
+- Howler.js (âm thanh)
+- SweetAlert2 (popup đẹp)
+- Day.js (xử lý thời gian)
+
+// Backend giả lập (LocalStorage + Mock Realtime):
+- LocalStorage: Lưu câu hỏi, lịch sử game
+- Mock WebSocket: Dùng setInterval để giả lập realtime
+Data Schema:
+JavaScript
+
+const GameData = {
+  // Ngân hàng câu hỏi
+  questions: [
+    {
+      id: "q001",
+      subject: "Toán học",
+      difficulty: "easy", // easy | medium | hard
+      type: "multiple_choice", // multiple_choice | true_false | fill_blank
+      content: "2 + 2 = ?",
+      image: "url_or_null",
+      options: ["3", "4", "5", "6"],
+      correctAnswer: 1, // index của đáp án đúng
+      explanation: "2 + 2 = 4 là phép tính cơ bản",
+      points: 100
+    }
+  ],
+  
+  // Phòng chơi
+  rooms: [
+    {
+      id: "room_123456",
+      pin: "123456",
+      hostName: "Cô Hoa",
+      questionSetId: "set_001",
+      settings: {
+        timePerQuestion: 20, // giây
+        eliminationMode: true, // loại trực tiếp
+        speedBonus: true // thưởng điểm cho người trả lời nhanh
+      },
+      status: "waiting", // waiting | playing | finished
+      players: [
+        {
+          id: "player_001",
+          name: "Nguyễn Văn A",
+          avatar: "😀",
+          score: 0,
+          correctAnswers: 0,
+          isEliminated: false,
+          answers: [] // lịch sử trả lời
+        }
+      ],
+      currentQuestion: 0,
+      startedAt: null,
+      finishedAt: null
+    }
+  ],
+  
+  // Lịch sử game
+  history: [
+    {
+      id: "game_001",
+      roomId: "room_123456",
+      date: "2026-03-12T14:30:00",
+      totalPlayers: 45,
+      winner: { name: "Nguyễn Văn A", score: 8500 },
+      averageScore: 6200,
+      questionSet: "Toán học lớp 6"
+    }
+  ]
+};
+Gemini AI Integration:
+JavaScript
+
+// Tính năng: Tạo tự động câu hỏi từ chủ đề
+async function generateQuestionsWithAI(topic, count, difficulty) {
+  const prompt = `
+Tạo ${count} câu hỏi trắc nghiệm về chủ đề "${topic}" với độ khó ${difficulty}.
+
+Yêu cầu:
+- Mỗi câu có 4 đáp án
+- Chỉ 1 đáp án đúng
+- Phù hợp với học sinh THCS/THPT
+- Có giải thích ngắn gọn
+
+Trả về JSON format:
+[
+  {
+    "content": "Câu hỏi...",
+    "options": ["A", "B", "C", "D"],
+    "correctAnswer": 0,
+    "explanation": "Giải thích..."
+  }
+]
+`;
+
+  const response = await callGeminiAI(prompt);
+  return JSON.parse(response);
+}
+
+// Gemini API Call với fallback
+const GEMINI_MODELS = ['gemini-2.0-flash-exp', 'gemini-1.5-flash', 'gemini-1.5-pro'];
+
+async function callGeminiAI(prompt, modelIndex = 0) {
+  const API_KEY = localStorage.getItem('gemini_api_key');
+  if (!API_KEY) {
+    showToast('⚠️ Chưa cài đặt API Key!', 'warning');
+    return null;
+  }
+  
+  try {
+    const response = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${GEMINI_MODELS[modelIndex]}:generateContent?key=${API_KEY}`,
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{ parts: [{ text: prompt }] }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 8192
+          }
+        })
+      }
+    );
+    
+    if (response.status === 429 && modelIndex < GEMINI_MODELS.length - 1) {
+      console.log(`Model ${GEMINI_MODELS[modelIndex]} bị giới hạn, chuyển sang ${GEMINI_MODELS[modelIndex + 1]}`);
+      return callGeminiAI(prompt, modelIndex + 1);
+    }
+    
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    
+    const data = await response.json();
+    return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+    
+  } catch (error) {
+    if (modelIndex < GEMINI_MODELS.length - 1) {
+      return callGeminiAI(prompt, modelIndex + 1);
+    }
+    showToast('❌ Lỗi API: ' + error.message, 'error');
+    return null;
+  }
+}
+🎨 YÊU CẦU GIAO DIỆN
+Design System:
+CSS
+
+/* Color Palette - Gameshow Theme */
+:root {
+  --primary: #FF6B35;      /* Cam rực rỡ */
+  --secondary: #F7931E;    /* Vàng gameshow */
+  --success: #4CAF50;      /* Xanh lá đúng */
+  --danger: #F44336;       /* Đỏ sai */
+  --dark: #2C3E50;         /* Nền tối */
+  --light: #ECF0F1;        /* Nền sáng */
+  
+  --gradient-gold: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
+  --gradient-fire: linear-gradient(135deg, #FF6B35 0%, #F7931E 100%);
+  
+  --shadow-card: 0 8px 24px rgba(0,0,0,0.12);
+  --shadow-float: 0 12px 40px rgba(0,0,0,0.15);
+  
+  --radius-lg: 20px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+}
+
+/* Typography */
+body {
+  font-family: 'Be Vietnam Pro', sans-serif;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.title-game {
+  font-size: 3rem;
+  font-weight: 900;
+  background: var(--gradient-gold);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 2px 2px 4px rgba(0,0,0,0.1);
+}
+Layout Structure:
+Plain Text
+
+┌─────────────────────────────────────────────────────┐
+│  HEADER: Logo + Tên Game + Settings                │
+├─────────────────────────────────────────────────────┤
+│                                                     │
+│  [Trang chủ]                                       │
+│  ┌─────────────┐  ┌─────────────┐  ┌────────────┐ │
+│  │ 📚 Quản lý  │  │ 🎮 Tạo      │  │ 📊 Lịch sử │ │
+│  │ Câu hỏi     │  │ Phòng Chơi  │  │ & Thống kê │ │
+│  └─────────────┘  └─────────────┘  └────────────┘ │
+│                                                     │
+│  [Màn hình Host - Khi đang chơi]                   │
+│  ┌─────────────────────────────────────────────┐   │
+│  │  Câu 5/20          ⏱️ 15s          Phòng: 123456│
+│  │                                              │   │
+│  │  🤔 Hành tinh nào lớn nhất Hệ Mặt Trời?    │   │
+│  │                                              │   │
+│  │  ┌──────────┐  ┌──────────┐                │   │
+│  │  │ A. Trái  │  │ B. Sao   │                │   │
+│  │  │    Đất   │  │    Thổ   │                │   │
+│  │  └──────────┘  └──────────┘                │   │
+│  │  ┌──────────┐  ┌──────────┐                │   │
+│  │  │ C. Sao   │  │ D. Sao   │                │   │
+│  │  │    Mộc   │  │    Hỏa   │                │   │
+│  │  └──────────┘  └──────────┘                │   │
+│  │                                              │   │
+│  │  📊 Biểu đồ trả lời: [████ 45%] [██ 20%]   │   │
+│  └─────────────────────────────────────────────┘   │
+│                                                     │
+│  🏆 TOP 5 HIỆN TẠI:                                │
+│  1. 👑 Nguyễn Văn A - 8500 điểm                    │
+│  2. 🥈 Trần Thị B - 7800 điểm                      │
+│  3. 🥉 Lê Văn C - 7200 điểm                        │
+│                                                     │
+└─────────────────────────────────────────────────────┘
+Components Chi tiết:
+1. Question Card (Thẻ câu hỏi)
+HTML
+
+<div class="question-card">
+  <div class="question-header">
+    <span class="question-number">Câu 5/20</span>
+    <span class="timer">⏱️ 15s</span>
+    <span class="difficulty-badge easy">Dễ</span>
+  </div>
+  
+  <div class="question-content">
+    <h2>Hành tinh nào lớn nhất Hệ Mặt Trời?</h2>
+    <img src="solar-system.jpg" alt="Hệ Mặt Trời" />
+  </div>
+  
+  <div class="options-grid">
+    <button class="option-btn" data-index="0">
+      <span class="option-label">A</span>
+      <span class="option-text">Trái Đất</span>
+    </button>
+    <!-- 3 options khác -->
+  </div>
+  
+  <div class="answer-stats">
+    <div class="stat-bar" style="--percent: 45%">
+      <span>A: 45%</span>
+    </div>
+    <!-- 3 bars khác -->
+  </div>
+</div>
+2. Leaderboard Component
+HTML
+
+<div class="leaderboard">
+  <h2>🏆 BẢNG XẾP HẠNG</h2>
+  
+  <div class="podium">
+    <div class="podium-item second">
+      <div class="avatar">🥈</div>
+      <div class="name">Trần Thị B</div>
+      <div class="score">7800</div>
+    </div>
+    
+    <div class="podium-item first">
+      <div class="crown">👑</div>
+      <div class="avatar">😎</div>
+      <div class="name">Nguyễn Văn A</div>
+      <div class="score">8500</div>
+    </div>
+    
+    <div class="podium-item third">
+      <div class="avatar">🥉</div>
+      <div class="name">Lê Văn C</div>
+      <div class="score">7200</div>
+    </div>
+  </div>
+  
+  <div class="rank-list">
+    <!-- Top 4-10 -->
+  </div>
+</div>
+3. Player Screen (Mobile)
+HTML
+
+<div class="player-screen">
+  <div class="player-info">
+    <span class="avatar">😀</span>
+    <span class="name">Nguyễn Văn A</span>
+    <span class="score">2400 điểm</span>
+  </div>
+  
+  <div class="question-display">
+    <p>Câu 5: Hành tinh nào lớn nhất?</p>
+    <div class="timer-circle">15</div>
+  </div>
+  
+  <div class="answer-buttons">
+    <button class="answer-btn btn-a">A. Trái Đất</button>
+    <button class="answer-btn btn-b">B. Sao Thổ</button>
+    <button class="answer-btn btn-c">C. Sao Mộc</button>
+    <button class="answer-btn btn-d">D. Sao Hỏa</button>
+  </div>
+  
+  <div class="status-bar">
+    <span>✅ 4 đúng</span>
+    <span>❌ 0 sai</span>
+  </div>
+</div>
+🎬 ANIMATIONS & EFFECTS
+CSS Animations:
+CSS
+
+/* Hiệu ứng đếm ngược */
+@keyframes pulse-timer {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); color: var(--danger); }
+}
+
+.timer.urgent {
+  animation: pulse-timer 0.5s infinite;
+}
+
+/* Hiệu ứng trả lời đúng */
+@keyframes correct-answer {
+  0% { background: var(--success); transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { background: var(--success); transform: scale(1); }
+}
+
+.option-btn.correct {
+  animation: correct-answer 0.6s ease;
+}
+
+/* Hiệu ứng leo rank */
+@keyframes rank-up {
+  0% { transform: translateY(20px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+.rank-item.new {
+  animation: rank-up 0.5s ease;
+}
+
+/* Confetti khi chiến thắng */
+.confetti {
+  position: fixed;
+  width: 10px;
+  height: 10px;
+  background: var(--secondary);
+  animation: confetti-fall 3s linear;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translateY(100vh) rotate(360deg);
+    opacity: 0;
+  }
+}
+Sound Effects:
+JavaScript
+
+const Sounds = {
+  bgMusic: new Howl({ src: ['gameshow-theme.mp3'], loop: true, volume: 0.3 }),
+  countdown: new Howl({ src: ['tick-tock.mp3'] }),
+  correct: new Howl({ src: ['ding.mp3'] }),
+  wrong: new Howl({ src: ['buzz.mp3'] }),
+  winner: new Howl({ src: ['fanfare.mp3'] })
+};
+
+// Phát âm thanh
+function playSound(soundName) {
+  if (settings.soundEnabled) {
+    Sounds[soundName].play();
+  }
+}
+🔄 USER FLOW CHI TIẾT
+Flow 1: Giáo viên tạo game
+Plain Text
+
+1. Vào "Quản lý Câu hỏi"
+   → Chọn "Tạo bộ câu hỏi mới"
+   → Nhập tên bộ đề (VD: "Toán 6 - Chương 1")
+   
+2. Thêm câu hỏi:
+   - Cách 1: Nhập thủ công (form)
+   - Cách 2: Import Excel/JSON
+   - Cách 3: Dùng AI Generator
+     → Nhập chủ đề + số lượng
+     → AI tạo tự động
+     → Review và chỉnh sửa
+   
+3. Vào "Tạo Phòng Chơi"
+   → Chọn bộ câu hỏi
+   → Cài đặt:
+     • Thời gian/câu: 20s
+     • Chế độ loại trực tiếp: Bật
+     • Điểm thưởng tốc độ: Bật
+   → Nhấn "Tạo phòng"
+   → Hiển thị mã PIN + QR Code
+   
+4. Chia sẻ mã PIN cho học sinh
+   → Chờ học sinh vào phòng
+   → Xem danh sách realtime
+   → Nhấn "Bắt đầu" khi đủ người
+Flow 2: Học sinh tham gia
+Plain Text
+
+1. Mở app trên điện thoại
+   → Nhập mã PIN (VD: 123456)
+   → Hoặc quét QR Code
+   
+2. Nhập thông tin:
+   → Tên: "Nguyễn Văn A"
+   → Chọn avatar: 😀
+   → Nhấn "Tham gia"
+   
+3. Phòng chờ:
+   → Hiển thị: "Đang chờ giáo viên bắt đầu..."
+   → Xem danh sách người chơi khác
+   
+4. Game bắt đầu:
+   → Màn hình hiện câu hỏi
+   → Đọc và chọn đáp án nhanh
+   → Nhận feedback ngay lập tức
+   → Xem điểm và xếp hạng hiện tại
+   
+5. Kết thúc:
+   → Xem kết quả cuối cùng
+   → Bảng xếp hạng top 10
+   → Podium 3 người chiến thắng
+Flow 3: Gameplay realtime
+Plain Text
+
+[Giáo viên nhấn "Bắt đầu"]
+   ↓
+Câu 1 hiện lên (cả host và player)
+   ↓
+Đồng hồ đếm ngược 20s
+   ↓
+Học sinh chọn đáp án
+   → Màn hình host: Biểu đồ cập nhật realtime
+   ↓
+Hết giờ hoặc tất cả đã trả lời
+   ↓
+Host nhấn "Công bố đáp án"
+   ↓
+Hiệu ứng:
+   • Đáp án đúng: Màu xanh + âm thanh "Ting!"
+   • Đáp án sai: Màu đỏ + âm thanh "Buzz"
+   • Học sinh sai (nếu chế độ loại): Hiển thị "Bạn đã bị loại"
+   ↓
+Cập nhật điểm và xếp hạng
+   ↓
+Chuyển sang câu tiếp theo
+   ↓
+Lặp lại cho đến hết câu hỏi
+   ↓
+Màn hình kết thúc:
+   • Pháo hoa + confetti
+   • Podium 3 người chiến thắng
+   • Bảng xếp hạng đầy đủ
+   • Nút "Xem báo cáo chi tiết"
