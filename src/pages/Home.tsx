@@ -25,7 +25,7 @@ export default function Home() {
 
           {/* Author */}
           <p className="text-sm text-slate-400 mb-10">
-            Phát triển bởi <span className="text-white font-medium">Trần Hoài Thanh</span>
+            Phát triển bởi <span className="text-white font-medium">thầy Nguyễn Việt Hùng</span>
           </p>
           
           <div className="space-y-4">
