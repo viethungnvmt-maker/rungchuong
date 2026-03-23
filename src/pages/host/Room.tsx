@@ -111,7 +111,7 @@ export default function HostRoom() {
     scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } },
   };
 
-  const joinUrl = `${window.location.origin}/play/${pin}`;
+  const joinUrl = `${window.location.origin}/play?pin=${pin}`;
 
   useEffect(() => {
     if (gameState === 'finished') {

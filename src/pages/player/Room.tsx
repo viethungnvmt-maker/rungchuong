@@ -33,7 +33,10 @@ export default function PlayerRoom() {
   // Join room
   useEffect(() => {
     const { name, avatar } = location.state || {};
-    if (!name || !pin) { navigate('/play'); return; }
+    if (!name || !pin) {
+      navigate(pin ? `/play?pin=${pin}` : '/play');
+      return;
+    }
     const doJoin = async () => {
       try {
         const success = await joinRoom(pin, name, avatar);

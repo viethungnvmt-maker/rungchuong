@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router';
+import React, { useMemo, useState } from 'react';
+import { useNavigate, useSearchParams } from 'react-router';
 import { motion } from 'motion/react';
 import { LogIn } from 'lucide-react';
 
@@ -7,7 +7,9 @@ const AVATARS = ['😀', '😎', '🤓', '🤠', '👽', '👻', '🤖', '🦊',
 
 export default function PlayerJoin() {
   const navigate = useNavigate();
-  const [pin, setPin] = useState('');
+  const [searchParams] = useSearchParams();
+  const initialPin = useMemo(() => (searchParams.get('pin') || '').toUpperCase(), [searchParams]);
+  const [pin, setPin] = useState(initialPin);
   const [name, setName] = useState('');
   const [avatar, setAvatar] = useState(AVATARS[0]);
 
