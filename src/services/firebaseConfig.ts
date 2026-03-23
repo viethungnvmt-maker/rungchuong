@@ -5,14 +5,13 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 // Firebase config - người dùng sẽ nhập thông tin này qua Settings
 // Hoặc hardcode nếu dự án cố định
 const firebaseConfig = {
-  apiKey: "AIzaSyAewJT84LXz0Nja9iRjAOQdi-zfJJEskxc",
-  authDomain: "rung-chuong-vang-c5dd8.firebaseapp.com",
-  databaseURL: "https://rung-chuong-vang-c5dd8-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "rung-chuong-vang-c5dd8",
-  storageBucket: "rung-chuong-vang-c5dd8.firebasestorage.app",
-  messagingSenderId: "334744109274",
-  appId: "1:334744109274:web:7680f8200c931848fce5e3",
-  measurementId: "G-6HY4DMN0ZM"
+  apiKey: "AIzaSyCmtTwz2-nJCJsgD287ma7PfiDFxr86sd0",
+  authDomain: "runchuongvang-a4045.firebaseapp.com",
+  databaseURL: "https://runchuongvang-a4045-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "runchuongvang-a4045",
+  storageBucket: "runchuongvang-a4045.firebasestorage.app",
+  messagingSenderId: "668956986075",
+  appId: "1:668956986075:web:0a2d338c9bf9b5ade5dafe"
 };
 
 const app = initializeApp(firebaseConfig);
