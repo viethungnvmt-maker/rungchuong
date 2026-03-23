@@ -21,23 +21,35 @@ const auth = getAuth(app);
 // Đăng nhập ẩn danh để có userId
 let currentUserId: string | null = null;
 
-const authReady = new Promise<string>((resolve) => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-      currentUserId = user.uid;
-      resolve(user.uid);
-    }
+const authReady = new Promise<string>((resolve, reject) => {
+  let settled = false;
+  const unsubscribe = onAuthStateChanged(auth, (user) => {
+    if (!user || settled) return;
+    currentUserId = user.uid;
+    settled = true;
+    unsubscribe();
+    resolve(user.uid);
   });
-  signInAnonymously(auth).catch((error) => {
+
+  signInAnonymously(auth).catch((error: any) => {
     console.error('[Firebase] Auth error:', error);
-    // Fallback: dùng random ID nếu auth fail
-    currentUserId = `anon_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-    resolve(currentUserId);
+
+    if (settled) return;
+    settled = true;
+    unsubscribe();
+
+    const code = error?.code || '';
+    const message =
+      code === 'auth/admin-restricted-operation' || code === 'auth/operation-not-allowed'
+        ? 'Firebase Anonymous Authentication chưa được bật cho project mới. Hãy vào Authentication > Sign-in method > Anonymous rồi bật Enable.'
+        : `Không thể đăng nhập ẩn danh vào Firebase${code ? ` (${code})` : ''}.`;
+
+    reject(new Error(message));
   });
 });
 
 export function getCurrentUserId(): string {
-  return currentUserId || `anon_${Date.now()}`;
+  return currentUserId || '';
 }
 
 export async function waitForAuth(): Promise<string> {

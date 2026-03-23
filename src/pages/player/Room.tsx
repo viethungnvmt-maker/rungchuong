@@ -35,9 +35,19 @@ export default function PlayerRoom() {
     const { name, avatar } = location.state || {};
     if (!name || !pin) { navigate('/play'); return; }
     const doJoin = async () => {
-      const success = await joinRoom(pin, name, avatar);
-      if (!success) { alert('Phòng không tồn tại hoặc game đã bắt đầu!'); navigate('/play'); }
-      else setJoined(true);
+      try {
+        const success = await joinRoom(pin, name, avatar);
+        if (!success) {
+          alert('Phòng không tồn tại hoặc game đã bắt đầu!');
+          navigate('/play');
+          return;
+        }
+        setJoined(true);
+      } catch (err: any) {
+        console.error('[PlayerRoom.joinRoom] Error:', err);
+        alert(err?.message || 'Không thể tham gia phòng. Vui lòng kiểm tra lại cấu hình Firebase.');
+        navigate('/play');
+      }
     };
     doJoin();
   }, [pin, location.state, navigate]);

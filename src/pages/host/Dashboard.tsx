@@ -278,9 +278,14 @@ export default function HostDashboard() {
 
   const handleCreateRoom = async () => {
     if (selectedQuestions.length === 0) return alert('Vui lòng chọn ít nhất 1 câu hỏi!');
-    const selectedQData = questions.filter(q => selectedQuestions.includes(q.id));
-    const pin = await createRoom(selectedQData, settings);
-    navigate(`/host/room/${pin}`);
+    try {
+      const selectedQData = questions.filter(q => selectedQuestions.includes(q.id));
+      const pin = await createRoom(selectedQData, settings);
+      navigate(`/host/room/${pin}`);
+    } catch (err: any) {
+      console.error('[handleCreateRoom] Error:', err);
+      alert(err?.message || 'Không thể tạo phòng. Vui lòng kiểm tra lại cấu hình Firebase.');
+    }
   };
 
   const handleDeleteQuestion = (id: number, e: React.MouseEvent) => {

@@ -75,7 +75,11 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   const submitLockRef = useRef(false);
 
   useEffect(() => {
-    waitForAuth().then(uid => setTabId(uid));
+    waitForAuth()
+      .then(uid => setTabId(uid))
+      .catch((err) => {
+        console.error('[GameProvider] Auth init error:', err);
+      });
     return () => { if (unsubscribeRef.current) unsubscribeRef.current(); };
   }, []);
 
@@ -330,9 +334,9 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     if (submitLockRef.current) return;
     submitLockRef.current = true;
 
-    const uid = getCurrentUserId();
-    const timeTaken = Date.now() - (room.questionStartTime || Date.now());
     try {
+      const uid = await waitForAuth();
+      const timeTaken = Date.now() - (room.questionStartTime || Date.now());
       await update(ref(database), {
         [`rooms/${room.pin}/answers/${uid}`]: answerIndex,
         [`rooms/${room.pin}/answerTimes/${uid}`]: timeTaken,
