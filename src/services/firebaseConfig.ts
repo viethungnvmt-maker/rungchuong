@@ -5,7 +5,7 @@ import { getAuth, signInAnonymously, onAuthStateChanged } from 'firebase/auth';
 // Firebase config - người dùng sẽ nhập thông tin này qua Settings
 // Hoặc hardcode nếu dự án cố định
 const firebaseConfig = {
-  apiKey: "AIzaSyCmtTwz2-nJCJsgD287ma7PfiDFxr86sd0",
+  apiKey: "AIzaSyCmtTwZ2-nJCJsqD287ma7PfiDFxr86sdQ",
   authDomain: "runchuongvang-a4045.firebaseapp.com",
   databaseURL: "https://runchuongvang-a4045-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "runchuongvang-a4045",
