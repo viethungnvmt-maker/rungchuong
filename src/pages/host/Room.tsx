@@ -18,6 +18,7 @@ export default function HostRoom() {
   const navigate = useNavigate();
   const {
     room, players, gameState, currentQuestion, answerResult, answers,
+    openRoomByPin,
     startGame, nextQuestion, showAnswer,
   } = useGame();
 
@@ -112,6 +113,26 @@ export default function HostRoom() {
   };
 
   const joinUrl = `${window.location.origin}/play?pin=${pin}`;
+
+  useEffect(() => {
+    if (!pin) {
+      navigate('/host');
+      return;
+    }
+
+    if (room?.pin === pin) return;
+
+    openRoomByPin(pin).then((success) => {
+      if (!success) {
+        alert('Phòng không tồn tại hoặc đã bị xóa!');
+        navigate('/host');
+      }
+    }).catch((err) => {
+      console.error('[HostRoom.openRoomByPin] Error:', err);
+      alert(err?.message || 'Không thể đồng bộ phòng từ Firebase.');
+      navigate('/host');
+    });
+  }, [pin, room?.pin, openRoomByPin, navigate]);
 
   useEffect(() => {
     if (gameState === 'finished') {

@@ -38,6 +38,7 @@ export interface Room {
 interface GameContextType {
   tabId: string;
   room: Room | null;
+  openRoomByPin: (pin: string) => Promise<boolean>;
   createRoom: (questions: Question[], settings: RoomSettings) => Promise<string>;
   startGame: () => void;
   nextQuestion: () => void;
@@ -177,6 +178,25 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
     setGameState('waiting');
     listenToRoom(pin);
     return pin;
+  }, [listenToRoom]);
+
+  const openRoomByPin = useCallback(async (pin: string): Promise<boolean> => {
+    const snapshot = await get(ref(database, `rooms/${pin}`));
+    if (!snapshot.exists()) return false;
+
+    const roomData = snapshot.val() as Room;
+    setRoom(roomData);
+
+    if (roomData.status === 'finished') {
+      setGameState('finished');
+    } else if (roomData.status === 'playing') {
+      setGameState('playing');
+    } else {
+      setGameState('waiting');
+    }
+
+    listenToRoom(pin);
+    return true;
   }, [listenToRoom]);
 
   const startGame = useCallback(async () => {
@@ -352,6 +372,7 @@ export function GameProvider({ children }: { children: React.ReactNode }) {
   return (
     <GameContext.Provider value={{
       tabId, room,
+      openRoomByPin,
       createRoom, startGame, nextQuestion, showAnswer,
       joinRoom, submitAnswer,
       players, currentQuestion, gameState, answerResult, answers, myPlayer,
