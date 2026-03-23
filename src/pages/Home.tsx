@@ -48,20 +48,6 @@ export default function Home() {
         </motion.div>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-6 left-0 right-0 text-center">
-        <p className="text-sm text-slate-500">
-          Các tool AI dành cho giáo viên có tại:{' '}
-          <a
-            href="https://giaovienai.vercel.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-orange-400 hover:text-orange-300 underline underline-offset-2 transition-colors"
-          >
-            giaovienai.vercel.app
-          </a>
-        </p>
-      </div>
     </div>
   );
 }
